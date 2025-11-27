@@ -1,18 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
-
-// type SandboxMessage =
-//   | { source: "playground"; type: "log"; payload: unknown[] }
-//   | { source: "playground"; type: "error"; payload: string }
-//   | { source: "playground"; type: "ready" };
-
-// type SandboxWindow = Window & {
-//   console: {
-//     log: (...args: unknown[]) => void;
-//     error: (...args: unknown[]) => void;
-//   };
-//   eval: (code: string) => unknown;
-// };
 
 export default function App() {
   const [code, setCode] = useState<string>(''); // Start with empty editor
@@ -124,13 +111,13 @@ export default function App() {
         <button onClick={runCode}>Run Code</button>
         <button onClick={() => setLogs([])}>Clear Console</button>
       </div>
-{/* 
+
       <iframe
         ref={iframeRef}
         title='sandbox'
         className='preview'
         sandbox='allow-scripts'
-      /> */}
+      />
 
       <div className='console'>
         <h3>Console:</h3>
