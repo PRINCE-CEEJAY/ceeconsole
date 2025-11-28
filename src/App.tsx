@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
-import Editor from "@monaco-editor/react";
-import "./App.css";
+import { useEffect, useRef, useState } from 'react';
+import Editor from '@monaco-editor/react';
+import './App.css';
 
 type SandboxMessage =
-  | { source: "playground"; type: "log"; payload: unknown[] }
-  | { source: "playground"; type: "error"; payload: string }
-  | { source: "playground"; type: "ready"; payload: null };
+  | { source: 'playground'; type: 'log'; payload: unknown[] }
+  | { source: 'playground'; type: 'error'; payload: string }
+  | { source: 'playground'; type: 'ready'; payload: null };
 
 export default function App() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const [code, setCode] = useState<string>("");
+  const [code, setCode] = useState<string>('');
   const [logs, setLogs] = useState<string[]>([]);
-  const debounceRef = useRef<number | undefined>();
+  const debounceRef = useRef<number | undefined>(undefined);
 
   const srcDoc = `
 <!doctype html>
@@ -46,39 +46,30 @@ export default function App() {
   useEffect(() => {
     const listener = (event: MessageEvent<SandboxMessage>) => {
       const d = event.data;
-      if (!d || d.source !== "playground") return;
+      if (!d || d.source !== 'playground') return;
 
       switch (d.type) {
-        case "log": {
+        case 'log': {
           const formatted = d.payload
             .map((item) =>
-              typeof item === "object" && item !== null
+              typeof item === 'object' && item !== null
                 ? JSON.stringify(item, null, 2)
                 : String(item)
             )
-            .join(" ");
+            .join(' ');
           setLogs((prev) => [...prev, formatted]);
           break;
         }
 
-        case "error":
-          setLogs((prev) => [...prev, "Error: " + d.payload]);
+        case 'error':
+          setLogs((prev) => [...prev, 'Error: ' + d.payload]);
           break;
       }
     };
 
-    window.addEventListener("message", listener);
-    return () => window.removeEventListener("message", listener);
+    window.addEventListener('message', listener);
+    return () => window.removeEventListener('message', listener);
   }, []);
-
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    debounceRef.current = window.setTimeout(() => {
-      setLogs([]); // 🧼 Clear console automatically
-      runCode();
-    }, 400);
-  }, [code]);
 
   const runCode = () => {
     const iframe = iframeRef.current;
@@ -88,46 +79,54 @@ export default function App() {
 
     setTimeout(() => {
       iframe.contentWindow?.postMessage(
-        { source: "playground-parent", type: "run", code },
-        "*"
+        { source: 'playground-parent', type: 'run', code },
+        '*'
       );
     }, 20);
   };
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = window.setTimeout(() => {
+      setLogs([]); // 🧼 Clear console automatically
+      runCode();
+    }, 400);
+  }, [code]);
 
   return (
-    <div className="container">
+    <div className='container'>
       <h2>JavaScript Playground by Prince Ceejay</h2>
 
-      <div className="editor-wrapper">
+      <div className='editor-wrapper'>
         <Editor
-          height="100%"
-          defaultLanguage="javascript"
+          height='100%'
+          defaultLanguage='javascript'
           value={code}
-          onChange={(value) => setCode(value ?? "")}
-          theme="vs-dark"
+          onChange={(value) => setCode(value ?? '')}
+          theme='vs-dark'
           options={{
             fontSize: 14,
             minimap: { enabled: false },
-            lineNumbers: "on",
+            lineNumbers: 'on',
           }}
         />
       </div>
 
-      <div className="buttons">
+      <div className='buttons'>
         <button onClick={runCode}>Run Code</button>
         <button onClick={() => setLogs([])}>Clear Console</button>
       </div>
 
       <iframe
         ref={iframeRef}
-        title="sandbox"
-        className="preview"
-        sandbox="allow-scripts"
+        title='sandbox'
+        className='preview'
+        sandbox='allow-scripts'
       />
 
-      <div className="console">
+      <div className='console'>
         <h3>Console:</h3>
-        <pre>{logs.join("\n")}</pre>
+        <pre>{logs.join('\n')}</pre>
       </div>
     </div>
   );
