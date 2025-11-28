@@ -104,6 +104,9 @@ export default function App() {
           value={code}
           onChange={(value) => setCode(value ?? '')}
           theme='vs-dark'
+           onMount={(editor) => {
+      editor.focus(); // Auto-focus when editor mounts
+    }}
           options={{
             fontSize: 14,
             minimap: { enabled: false },
