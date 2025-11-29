@@ -96,6 +96,10 @@ export default function App() {
   return (
     <div className='container'>
       <h2>JavaScript Playground by Prince Ceejay</h2>
+    <div className='buttons'>
+      <button onClick={runCode}>Run Code</button>
+      <button onClick={() => setLogs([])}>Clear Console</button>
+    </div>
 
       <div className='editor-wrapper'>
         <Editor
@@ -109,16 +113,12 @@ export default function App() {
     }}
           options={{
             fontSize: 14,
-            minimap: { enabled: false },
+            minimap: { enabled: true },
             lineNumbers: 'on',
           }}
         />
       </div>
 
-      <div className='buttons'>
-        <button onClick={runCode}>Run Code</button>
-        <button onClick={() => setLogs([])}>Clear Console</button>
-      </div>
 
       <iframe
         ref={iframeRef}
