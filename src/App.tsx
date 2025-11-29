@@ -7,11 +7,24 @@ type SandboxMessage =
   | { source: 'playground'; type: 'error'; payload: string }
   | { source: 'playground'; type: 'ready'; payload: null };
 
+const LOCAL_STORAGE_KEY = 'ceejay-playground-code';
+
 export default function App() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [code, setCode] = useState<string>('');
   const [logs, setLogs] = useState<string[]>([]);
   const debounceRef = useRef<number | undefined>(undefined);
+
+  // Load code from localStorage on mount
+  useEffect(() => {
+    const savedCode = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedCode) setCode(savedCode);
+  }, []);
+
+  // Save code to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, code);
+  }, [code]);
 
   const srcDoc = `
 <!doctype html>
@@ -84,6 +97,7 @@ export default function App() {
       );
     }, 20);
   };
+
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -96,41 +110,42 @@ export default function App() {
   return (
     <div className='container'>
       <h2 className='animate-bounce'>JavaScript Playground by Prince Ceejay</h2>
-    <div className='buttons'>
-      <button onClick={runCode}>Run Code</button>
-      <button onClick={() => setLogs([])}>Clear Console</button>
-    </div>
+      <div className='buttons'>
+        <button onClick={runCode}>Run Code</button>
+        <button onClick={() => setLogs([])}>Clear Console</button>
+      </div>
 
-<div className='flex'>
-      <div className='h-screen pb-2 editor-wrapper'>
-        <Editor
-          height='100%'
-          defaultLanguage='javascript'
-          value={code}
-          onChange={(value) => setCode(value ?? '')}
-          theme='vs-dark'
-           onMount={(editor) => {
-      editor.focus(); // Auto-focus when editor mounts
-    }}
-          options={{
-            fontSize: 14,
-            minimap: { enabled: true },
-            lineNumbers: 'on',
-          }}
+      <div className='flex'>
+        <div className='h-screen pb-2 editor-wrapper'>
+          <Editor
+            height='100%'
+            defaultLanguage='javascript'
+            value={code}
+            onChange={(value) => setCode(value ?? '')}
+            theme='vs-dark'
+            onMount={(editor) => {
+              editor.focus(); // Auto-focus when editor mounts
+            }}
+            options={{
+              fontSize: 14,
+              minimap: { enabled: false },
+              lineNumbers: 'on',
+            }}
+          />
+        </div>
+
+        <iframe
+          ref={iframeRef}
+          title='sandbox'
+          className='preview'
+          sandbox='allow-scripts'
         />
-      </div>
-      <iframe
-        ref={iframeRef}
-        title='sandbox'
-        className='preview'
-        sandbox='allow-scripts'
-      />
 
-      <div className='h-screen console'>
-        <h3 className='animate-pulse font-bold text-xl'>Console:</h3>
-        <pre className='text-left pb-2'>{logs.join('\n')}</pre>
+        <div className='h-screen console'>
+          <h3 className='animate-pulse font-bold text-xl'>Console:</h3>
+          <pre className='text-left pb-2'>{logs.join('\n')}</pre>
+        </div>
       </div>
-</div>
     </div>
   );
 }
