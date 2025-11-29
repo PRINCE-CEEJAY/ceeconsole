@@ -95,13 +95,14 @@ export default function App() {
 
   return (
     <div className='container'>
-      <h2>JavaScript Playground by Prince Ceejay</h2>
+      <h2 className='animate-bounce'>JavaScript Playground by Prince Ceejay</h2>
     <div className='buttons'>
       <button onClick={runCode}>Run Code</button>
       <button onClick={() => setLogs([])}>Clear Console</button>
     </div>
 
-      <div className='editor-wrapper'>
+<div className='flex'>
+      <div className='h-screen pb-2 editor-wrapper'>
         <Editor
           height='100%'
           defaultLanguage='javascript'
@@ -118,8 +119,6 @@ export default function App() {
           }}
         />
       </div>
-
-
       <iframe
         ref={iframeRef}
         title='sandbox'
@@ -127,10 +126,11 @@ export default function App() {
         sandbox='allow-scripts'
       />
 
-      <div className='console'>
-        <h3>Console:</h3>
-        <pre>{logs.join('\n')}</pre>
+      <div className='h-screen console'>
+        <h3 className='animate-pulse font-bold text-xl'>Console:</h3>
+        <pre className='text-left pb-2'>{logs.join('\n')}</pre>
       </div>
+</div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+@import 'tailwindcss';
 body {
   margin: 0;
   font-family: Consolas, monospace;
@@ -46,17 +47,20 @@ button:hover {
   display: none; /* hidden, since execution is sandbox only */
 }
 
-.editor-wrapper {
-  flex: 1; /* Takes all available remaining space */
+.editor-wrapper {  
   border: 1px solid #333;
+  flex: 1;
 }
 
 .console {
+  width: 50%;
   background: #111;
-  height: 150px;
   border: 1px solid #333;
   padding: 8px;
   overflow-y: auto;
   font-size: 13px;
   white-space: pre-wrap;
+}
+.console .log {
+ text-align: left;
 }
